@@ -22,8 +22,8 @@ rfcv 5541
 
 ```sh
 mkdir -p ~/bin
-curl -sL https://raw.github.com/amakukha/rfc/master/rfc_color.py > ~/bin/rfc_color.py
-curl -sL https://raw.github.com/amakukha/rfc/master/rfcv > ~/bin/rfcv
+curl -sL https://raw.github.com/amakukha/rfcv/master/rfc_color.py > ~/bin/rfc_color.py
+curl -sL https://raw.github.com/amakukha/rfcv/master/rfcv > ~/bin/rfcv
 chmod u+x ~/bin/rfcv
 ```
 
