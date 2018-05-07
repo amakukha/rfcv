@@ -36,6 +36,7 @@ echo 'export PATH="$HOME/bin:$PATH"' >> ~/.bashrc
 ## Requirements
 
 - Python 3
+- Python [Requests](http://docs.python-requests.org/en/master/)
 - `less`
 
 
