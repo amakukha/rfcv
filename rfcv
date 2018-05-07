@@ -1,0 +1,4 @@
+#!/bin/bash
+
+#python3 ~/bin/rfc_color.py $@ | less -rM		# DEBUG
+python3 ~/bin/rfc_color.py $@ | less -rM +Gg
