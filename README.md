@@ -3,7 +3,7 @@
 [RFCs](http://www.ietf.org/rfc.html) (Requests for Comments) from the 
 Linux terminal. It fetches RFCs from the Web and caches them locally.
 
-`rfcv` displays RFC text with colors, to make it more readable and easier to understand.
+`rfcv` displays RFC text with colors to make it more readable and easier to understand.
 
 
 ## Usage
@@ -17,8 +17,6 @@ rfcv 5541
 
 
 ## Install
-
-### Basic install
 
 ```sh
 mkdir -p ~/bin
@@ -35,7 +33,7 @@ echo 'export PATH="$HOME/bin:$PATH"' >> ~/.bashrc
 ```
 
 
-### Requirements
+## Requirements
 
 - Python 3
 - `less`
