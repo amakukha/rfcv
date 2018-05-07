@@ -16,6 +16,16 @@ rfcv 5541
 ```
 
 
+## Prerequisites
+
+- Python 3
+- Python [Requests](http://docs.python-requests.org/en/master/)
+```sh
+sudo -H python3 -m pip install requests
+```
+- `less`
+
+
 ## Install
 
 ```sh
@@ -31,13 +41,6 @@ If it’s not in your `PATH`, you have to add it:
 ```sh
 echo 'export PATH="$HOME/bin:$PATH"' >> ~/.bashrc
 ```
-
-
-## Requirements
-
-- Python 3
-- Python [Requests](http://docs.python-requests.org/en/master/)
-- `less`
 
 
 ## Inspired by

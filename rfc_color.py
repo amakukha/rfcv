@@ -49,7 +49,7 @@ class Cl:
     gray = lambda s: Cl.fg(s, 245)
 
     #title = lambda s: Cl.BGREEN + s + Cl.RESET
-    title = lambda s: Cl.bg(s, 196)
+    title = lambda s: Cl.bg(s, 88)
 
 def get_rfc_text(num):
     '''Retrieve the plain text of RFC'''
@@ -84,7 +84,7 @@ def get_rfc_text(num):
     # Save locally
     try:
         if not os.path.exists(rfc_path):
-            os.path.makedirs(rfc_path)
+            os.makedirs(rfc_path)
         open(rfc_fn,'w').write(text)
         print("Saved locally")
     except:
@@ -248,7 +248,7 @@ class RFCParser:
             line = line.rstrip()
             indent = self.what_indent(line)
 
-            # SWITCH 
+            # SWITCH
 
             # Empty line
             if not line:
@@ -263,7 +263,7 @@ class RFCParser:
                 CAT_COLOR = 200
                 line = Cl.fg(line, HAT_COLOR) + '\n'
 
-                # Obsolete 
+                # Obsolete
                 match = self.re_hat_obs.search(line)
                 if match:
                     self.obsoleted = [x.strip() for x in match.group(2).split(',')]
@@ -310,7 +310,7 @@ class RFCParser:
                 #r += Cl.fg(line, 13) + "\n"
                 r += Cl.BOLD + line + Cl.RESET + "\n"
 
-            # Topic? 
+            # Topic?
             elif self.main_indent and indent==self.min_indent:
                 #r += Cl.BOLD + line + Cl.RESET + '\n'
                 r += Cl.fg(line, 14) + "\n"
