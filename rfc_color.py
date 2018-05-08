@@ -6,7 +6,7 @@ import requests
 import sys, os, re, time
 from signal import signal, SIGPIPE, SIG_DFL
 
-VERSION = "0.1.1"
+VERSION = "0.1.2"
 
 signal(SIGPIPE,SIG_DFL)
 
@@ -104,7 +104,7 @@ class RFCParser:
     re_hat_rfc = re.compile(r'((?:RFC|Request for Comments):\s*)(\d+)', re.I)
     re_hat_obs = re.compile(r'((?:Obsoletes|Replaces):\s*)(\d+(,\s*)?)+', re.I)
     re_hat_upd = re.compile(r'((?:Updates):\s*)(\d+(,\s*)?)+', re.I)
-    re_hat_cat = re.compile(r'((?:Category):\s*)(.+?)(\s{3}|$)', re.I)
+    re_hat_cat = re.compile(r'((?:Category):\s*)(.+?)(\s{3}|$|\x1b\[)', re.I)
     re_toc_chapter = re.compile(r'^(\s*)((?:\d+\.?)+|[A-Z])?(\s+)(\w.*?\w)((?:\s*\.){4,}\s*)(\d+)\s*$')
     re_chapter = re.compile(r'^(\s*)((?:\d+\.?)+|[A-Z])?(\s+)(\w.*?\w)\s*$')
     re_rfc = re.compile(r'(RFC)(\s{0,1})(\d+)')
@@ -293,6 +293,7 @@ class RFCParser:
                     line = self.re_hat_rfc.sub("\\1" + Cl.RESET + Cl.fg("\\2", self.THIS_COLOR) + Cl.fg_col(self.HAT_COLOR), line)
 
                 # Category
+                # TODO: for RFC 2549 make it more elegant
                 if self.re_hat_cat.search(line):
                     line = self.re_hat_cat.sub("\\1" + Cl.RESET + Cl.fg("\\2", self.CATEGORY_COLOR) + Cl.fg_col(self.HAT_COLOR) + "\\3", line)
 
