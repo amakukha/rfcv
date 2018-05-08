@@ -1,6 +1,6 @@
 # rfcv
-`rfcv` is a tiny command-line tool written in Python and Bash to read colored 
-[RFCs](http://www.ietf.org/rfc.html) (Requests for Comments) from the 
+`rfcv` is a tiny command-line tool written in Python and Bash to display
+colored [RFCs](http://www.ietf.org/rfc.html) (Requests for Comments) in the 
 Linux terminal. It fetches RFCs from the Web and caches them locally.
 
 `rfcv` makes use of a simple RFC parser to apply color coding to the plain text.
@@ -13,7 +13,6 @@ Type `rfcv` followed by the RFC number. For example:
 
 ```sh
 rfcv 2549
-rfcv 5514
 rfcv 6214
 ```
 
