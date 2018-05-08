@@ -6,7 +6,7 @@ import requests
 import sys, os, re, time
 from signal import signal, SIGPIPE, SIG_DFL
 
-VERSION = "0.1"
+VERSION = "0.1.1"
 
 signal(SIGPIPE,SIG_DFL)
 
@@ -38,6 +38,8 @@ class Cl:
     DMAGENTA  = '\033[35m'
     DCYAN     = '\033[36m'
 
+    # 256 colors
+    #   See example: https://stackoverflow.com/questions/287871/print-in-terminal-with-colors/50025330#50025330
     fg_col = lambda color: "\33[38;5;" + str(color) + "m"
     bg_col = lambda color: "\33[48;5;" + str(color) + "m"
 
@@ -96,14 +98,25 @@ class RFCParser:
     '''
     A class for doing basic plain text RFC parsing and coloring
     '''
+    # Precompiled regular expressions
     re_page_num = re.compile(r'\[\s*Page\s+(\d+|[ivxlc]+)\s*\]', re.I)
     re_toc = re.compile(r'^\s*Table\s+of\s+contents\s*$',re.I)
     re_hat_rfc = re.compile(r'((?:RFC|Request for Comments):\s*)(\d+)', re.I)
     re_hat_obs = re.compile(r'((?:Obsoletes|Replaces):\s*)(\d+(,\s*)?)+', re.I)
+    re_hat_upd = re.compile(r'((?:Updates):\s*)(\d+(,\s*)?)+', re.I)
     re_hat_cat = re.compile(r'((?:Category):\s*)(.+?)(\s{3}|$)', re.I)
     re_toc_chapter = re.compile(r'^(\s*)((?:\d+\.?)+|[A-Z])?(\s+)(\w.*?\w)((?:\s*\.){4,}\s*)(\d+)\s*$')
     re_chapter = re.compile(r'^(\s*)((?:\d+\.?)+|[A-Z])?(\s+)(\w.*?\w)\s*$')
     re_rfc = re.compile(r'(RFC)(\s{0,1})(\d+)')
+
+    # Coloring
+    HAT_COLOR = 42
+    OBSOLETE_COLOR = 202
+    UPDATED_COLOR = 11
+    THIS_COLOR = 14
+    CATEGORY_COLOR = 200
+    RFC_COLOR = 177
+    OTHER_RFC_COLOR = 45
 
     def __init__(self, text=None):
         # Line numbers
@@ -112,6 +125,7 @@ class RFCParser:
         self.toc_lines = []
 
         self.obsoleted = []     # list of RFC numbers (as strings) that are obsoleted by this document
+        self.updated = []       # list of RFC numbers (as strings) that are updated by this document
 
         self.rfc = None         # number of RFC as parsed
         self.bottom = None      # line with page number
@@ -125,10 +139,13 @@ class RFCParser:
             self.analyze(text)
 
     def rfc_num_color(self, match):
-        return Cl.fg(
-                   match.group(1),11) + match.group(2) + Cl.fg(match.group(3),
-                   202 if match.group(3) in self.obsoleted else 45
-               )
+        def color(num):
+            if num in self.obsoleted: return self.OBSOLETE_COLOR
+            if num in self.updated: return self.UPDATED_COLOR
+            return self.OTHER_RFC_COLOR
+        return Cl.fg(match.group(1), self.RFC_COLOR) + \
+               match.group(2) + \
+               Cl.fg(match.group(3), color(match.group(3)))
 
     @staticmethod
     def what_indent(line):
@@ -257,21 +274,28 @@ class RFCParser:
 
             # Hat
             elif nl in self.hat:
-                HAT_COLOR = 42
-                OBS_COLOR = 202     # bg = 52, 166
-                CUR_COLOR = 14
-                CAT_COLOR = 200
-                line = Cl.fg(line, HAT_COLOR) + '\n'
+                line = Cl.fg(line, self.HAT_COLOR) + '\n'
 
                 # Obsolete
                 match = self.re_hat_obs.search(line)
                 if match:
                     self.obsoleted = [x.strip() for x in match.group(2).split(',')]
-                    line = self.re_hat_obs.sub("\\1" + Cl.RESET + Cl.fg_col(OBS_COLOR) + "\\2" + Cl.RESET + Cl.fg_col(HAT_COLOR), line)
+                    line = self.re_hat_obs.sub("\\1" + Cl.RESET + Cl.fg("\\2", self.OBSOLETE_COLOR) + Cl.fg_col(self.HAT_COLOR), line)
+
+                # Updated
+                match = self.re_hat_upd.search(line)
+                if match:
+                    self.updated = [x.strip() for x in match.group(2).split(',')]
+                    line = self.re_hat_upd.sub("\\1" + Cl.RESET + Cl.fg("\\2", self.UPDATED_COLOR) + Cl.fg_col(self.HAT_COLOR), line)
+
+                # This RFC's number
                 if self.re_hat_rfc.search(line):
-                    line = self.re_hat_rfc.sub("\\1" + Cl.RESET + Cl.fg_col(CUR_COLOR) + "\\2" + Cl.RESET + Cl.fg_col(HAT_COLOR), line)
+                    line = self.re_hat_rfc.sub("\\1" + Cl.RESET + Cl.fg("\\2", self.THIS_COLOR) + Cl.fg_col(self.HAT_COLOR), line)
+
+                # Category
                 if self.re_hat_cat.search(line):
-                    line = self.re_hat_cat.sub("\\1" + Cl.RESET + Cl.fg_col(CAT_COLOR) + "\\2" + Cl.RESET + Cl.fg_col(HAT_COLOR) + "\\3", line)
+                    line = self.re_hat_cat.sub("\\1" + Cl.RESET + Cl.fg("\\2", self.CATEGORY_COLOR) + Cl.fg_col(self.HAT_COLOR) + "\\3", line)
+
                 r += line
 
             # Title

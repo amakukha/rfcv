@@ -3,16 +3,18 @@
 [RFCs](http://www.ietf.org/rfc.html) (Requests for Comments) from the 
 Linux terminal. It fetches RFCs from the Web and caches them locally.
 
-`rfcv` displays RFC text with colors to make it more readable and easier to understand.
+`rfcv` makes use of a simple RFC parser to apply color coding to the plain text.
+It makes the text more readable and easier to understand.
 
 
 ## Usage
 
-Just type `rfcv` followed by the RFC number. For example:
+Type `rfcv` followed by the RFC number. For example:
 
 ```sh
 rfcv 2549
-rfcv 5541
+rfcv 5514
+rfcv 6214
 ```
 
 
@@ -20,10 +22,8 @@ rfcv 5541
 
 - Python 3
 - Python [Requests](http://docs.python-requests.org/en/master/)
-```sh
-sudo -H python3 -m pip install requests
-```
 - `less`
+- `curl` (for installing only)
 
 
 ## Install
