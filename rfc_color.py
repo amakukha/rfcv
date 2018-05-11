@@ -6,7 +6,7 @@ import requests
 import sys, os, re, time
 from signal import signal, SIGPIPE, SIG_DFL
 
-VERSION = "0.1.2"
+VERSION = "0.2.0"
 
 signal(SIGPIPE,SIG_DFL)
 
@@ -49,9 +49,6 @@ class Cl:
     bold = lambda s: Cl.BOLD + s + Cl.RESET
     red = lambda s: Cl.LRED + s + Cl.RESET
     gray = lambda s: Cl.fg(s, 245)
-
-    #title = lambda s: Cl.BGREEN + s + Cl.RESET
-    title = lambda s: Cl.bg(s, 88)
 
 def get_rfc_text(num):
     '''Retrieve the plain text of RFC'''
@@ -109,6 +106,14 @@ class RFCParser:
     re_chapter = re.compile(r'^(\s*)((?:\d+\.?)+|[A-Z])?(\s+)(\w.*?\w)\s*$')
     re_rfc = re.compile(r'(RFC)(\s{0,1})(\d+)')
 
+    # RFC 2119
+    # TODO: make this tolerant to line breaks
+    re_must_not = re.compile(r'(?<!\w|;)(MUST NOT|SHALL NOT)(?!\033)')
+    re_must = re.compile(r'(?<!\w|;)(MUST|SHALL|REQUIRED)(?!\033)')
+    re_should_not = re.compile(r'(?<!\w|;)(SHOULD NOT|NOT RECOMMENDED)(?!\033)')
+    re_should = re.compile(r'(?<!\w|;)(SHOULD|RECOMMENDED)(?!\033)')
+    re_may = re.compile(r'(?<!\w|;)(MAY|OPTIONAL)(?!\033)')
+
     # Coloring
     HAT_COLOR = 42
     OBSOLETE_COLOR = 202
@@ -117,6 +122,15 @@ class RFCParser:
     CATEGORY_COLOR = 200
     RFC_COLOR = 177
     OTHER_RFC_COLOR = 45
+
+    # Background colors
+    # TODO: we are not tracking line breaks, so these keywords have only three colors
+    TITLE_BG = 88
+    MUST_NOT_BG = 88
+    MUST_BG = 88    # 89
+    SHOULD_NOT_BG = 94 # 58 
+    SHOULD_BG = 94 #60
+    MAY_BG = 22
 
     def __init__(self, text=None):
         # Line numbers
@@ -303,7 +317,7 @@ class RFCParser:
             elif nl in self.title:
                 actual_text = line.lstrip()
                 spaces = line[:-len(actual_text)]
-                r += spaces + Cl.title(actual_text) + '\n'
+                r += spaces + Cl.bg(actual_text, self.TITLE_BG) + '\n'
 
             # Page number
             elif self.re_page_num.search(line):
@@ -342,7 +356,14 @@ class RFCParser:
 
             # Default: as is
             else:
-                r += self.re_rfc.sub(self.rfc_num_color,line) + '\n'        # TODO: allow multiline RFC numbers
+                # TODO: allow multiline RFC numbers
+                line = self.re_rfc.sub(self.rfc_num_color,line)
+                line = self.re_must_not.sub(Cl.bg("\\1", self.MUST_NOT_BG),line)
+                line = self.re_must.sub(Cl.bg("\\1", self.MUST_BG),line)
+                line = self.re_should_not.sub(Cl.bg("\\1", self.SHOULD_NOT_BG),line)
+                line = self.re_should.sub(Cl.bg("\\1", self.SHOULD_BG),line)
+                line = self.re_may.sub(Cl.bg("\\1", self.MAY_BG),line)
+                r += line + '\n'
 
             last_line = line
 
