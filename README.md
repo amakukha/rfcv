@@ -16,6 +16,11 @@ rfcv 2549
 rfcv 6214
 ```
 
+Example screenshots:
+<p align="center">
+  <img src="https://github.com/amakukha/rfcv/raw/master/screenshots/RFC_6665_rfcv_screenshot.png" width="250" alt="RFC6665 viewed in rfcv utility">
+  <img src="https://github.com/amakukha/rfcv/raw/master/screenshots/RFC_3428_rfcv_screenshot.png" width="250" title="RFC3428 viewed in rfcv utility">
+</p>
 
 ## Prerequisites
 
