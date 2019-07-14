@@ -6,7 +6,7 @@ import requests
 import sys, os, re, time
 from signal import signal, SIGPIPE, SIG_DFL
 
-VERSION = "0.2.0"
+VERSION = "0.2.1"
 
 signal(SIGPIPE,SIG_DFL)
 
@@ -102,8 +102,8 @@ class RFCParser:
     re_hat_obs = re.compile(r'((?:Obsoletes|Replaces):\s*)(\d+(,\s*)?)+', re.I)
     re_hat_upd = re.compile(r'((?:Updates):\s*)(\d+(,\s*)?)+', re.I)
     re_hat_cat = re.compile(r'((?:Category):\s*)(.+?)(\s{3}|$|\x1b\[)', re.I)
-    re_toc_chapter = re.compile(r'^(\s*)((?:\d+\.?)+|[A-Z])?(\s+)(\w.*?\w)((?:\s*\.){4,}\s*)(\d+)\s*$')
-    re_chapter = re.compile(r'^(\s*)((?:\d+\.?)+|[A-Z])?(\s+)(\w.*?\w)\s*$')
+    re_chapter = re.compile(r'^(\s*)((?:Appendix )?(?:\d+\.|[A-Z]\.)*(?:\d+\.?|[A-Z]\.?)?)?(\s+)(\w.*?\w)\s*$')
+    re_toc_chapter = re.compile(r'^(\s*)((?:Appendix )?(?:\d+\.|[A-Z]\.)*(?:\d+\.?|[A-Z]\.?)?)?(\s+)(\w.*?\w)((?:\s*\.){4,}\s*)(\d+)\s*$')
     re_rfc = re.compile(r'(RFC)(\s{0,1})(\d+)')
 
     # RFC 2119
